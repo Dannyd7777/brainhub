@@ -19,14 +19,13 @@
             align-items: center;
             justify-content: center;
             height: 100vh;
-            position: relative;
         }
 
         .start-container::before {
             content: '';
             position: absolute;
-            width: 600px;
-            height: 600px;
+            width: 600px; /* Adjust this based on the actual size of your GIF */
+            height: 600px; /* Adjust this based on the actual size of your GIF */
             background: url('brainhub.gif') no-repeat center center;
             background-size: contain;
             border: 6px solid #ff1493;
@@ -170,36 +169,179 @@
 
     <div class="game-area" id="gameArea">
         <div class="stickman" id="stickman" style="bottom: 10%; left: 50%; transform: translateX(-50%);">You</div>
-        <!-- Boxen -->
+        
+        <!-- Box 1 -->
         <div class="box" style="top: 20%; left: 10%;" data-semester="1">
             <div class="box-label" onclick="teleportToBox(10, 30)">Semester 1</div>
         </div>
+        
+        <!-- Box 2 -->
         <div class="box" style="top: 20%; left: 45%;" data-semester="2">
             <div class="box-label" onclick="teleportToBox(45, 30)">Semester 2</div>
         </div>
+        
+        <!-- Box 3 -->
         <div class="box" style="top: 20%; left: 80%;" data-semester="3">
             <div class="box-label" onclick="teleportToBox(80, 30)">Semester 3</div>
         </div>
     </div>
 
+    <div class="popup" id="popup">
+        <h2 id="popupTitle"></h2>
+        <div class="modules" id="popupContent"></div>
+    </div>
+
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const countdownElement = document.getElementById("countdown");
-            const startScreen = document.getElementById("startScreen");
-            const gameArea = document.getElementById("gameArea");
+        const startScreen = document.getElementById('startScreen');
+        const gameArea = document.getElementById('gameArea');
+        const countdownElement = document.getElementById('countdown');
+        const stickman = document.getElementById('stickman');
+        const boxes = document.querySelectorAll('.box');
+        const popup = document.getElementById('popup');
+        const popupTitle = document.getElementById('popupTitle');
+        const popupContent = document.getElementById('popupContent');
 
-            let countdown = 3;
+        const SPEED = 5;
 
-            const interval = setInterval(() => {
-                countdown--;
-                countdownElement.textContent = countdown;
-                if (countdown === 0) {
-                    clearInterval(interval);
-                    startScreen.style.display = "none";
-                    gameArea.style.display = "block";
+        let stickmanX = 50; // Startposition (in Prozent)
+        let stickmanY = 90;
+
+        const semesterModules = {
+            1: [
+                "Einführung in die Informatik",
+                "Business Mathematik",
+                "Projektmanagement",
+                "Requirements Engineering",
+                "Wissenschaftliches Arbeiten 1"
+            ],
+            2: [
+                "Grundlagen der Programmierung",
+                "Allgemeine BWL",
+                "Datenschutz",
+                "Software Engineering",
+                "Wissenschaftliches Arbeiten 2",
+                "Englisch"
+            ],
+            3: [
+                "Software Ergonomie",
+                "Empirische Methoden",
+                "Product Lifecycle Management",
+                "Softwareproduktentwicklung",
+                "Moderation und Führung"
+            ]
+        };
+
+        // Countdown logic
+        let countdown = 3;
+        const interval = setInterval(() => {
+            countdown--;
+            countdownElement.textContent = countdown;
+            if (countdown === 0) {
+                clearInterval(interval);
+                startScreen.style.display = 'none';
+                gameArea.style.display = 'block';
+                initializeGame();
+            }
+        }, 1000);
+
+        function initializeGame() {
+            document.addEventListener("keydown", (e) => {
+                if (e.key === "w") stickmanY -= SPEED;
+                if (e.key === "s") stickmanY += SPEED;
+                if (e.key === "a") stickmanX -= SPEED;
+                if (e.key === "d") stickmanX += SPEED;
+
+                stickmanX = Math.max(0, Math.min(stickmanX, 95));
+                stickmanY = Math.max(0, Math.min(stickmanY, 90));
+
+                stickman.style.left = `${stickmanX}%`;
+                stickman.style.top = `${stickmanY}%`;
+
+                let isNearBox = false;
+
+                boxes.forEach((box) => {
+                    const boxRect = box.getBoundingClientRect();
+                    const stickmanRect = stickman.getBoundingClientRect();
+                    if (
+                        stickmanRect.left < boxRect.right &&
+                        stickmanRect.right > boxRect.left &&
+                        stickmanRect.top < boxRect.bottom &&
+                        stickmanRect.bottom > boxRect.top
+                    ) {
+                        isNearBox = true;
+                        box.classList.add('open');
+                        const semester = box.dataset.semester;
+                        showPopup(semester);
+                    } else {
+                        box.classList.remove('open');
+                    }
+                });
+
+                if (!isNearBox) {
+                    popup.style.display = 'none';
                 }
-            }, 1000);
-        });
+            });
+        }
+
+        function teleportToBox(left, top) {
+            console.log("Teleporting to:", left, top);
+            stickmanX = left;
+            stickmanY = top;
+            stickman.style.left = `${stickmanX}%`;
+            stickman.style.top = `${stickmanY}%`;
+        }
+
+        function showPopup(semester) {
+            popupTitle.textContent = `${semester}. Semester Modules`;
+            popupContent.innerHTML = '';
+
+            semesterModules[semester].forEach(module => {
+                const button = document.createElement('button');
+                button.textContent = module;
+
+                // Button öffnet neues Tab
+                button.addEventListener('click', () => {
+                    openModulePage(module);
+                });
+
+                popupContent.appendChild(button);
+            });
+
+            popup.style.display = 'flex';
+        }
+
+        function openModulePage(module) {
+            const newWindow = window.open('', '_blank');
+            newWindow.document.write(`
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>${module}</title>
+                    <style>
+                        body {
+                            font-family: Arial, sans-serif;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            height: 100vh;
+                            margin: 0;
+                            background-color: black;
+                            color: white;
+                        }
+
+                        h1 {
+                            color: #ff1493;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <h1>${module}</h1>
+                </body>
+                </html>
+            `);
+        }
     </script>
 </body>
 </html>
