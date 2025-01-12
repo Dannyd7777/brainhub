@@ -231,7 +231,6 @@
             ]
         };
 
-        // Countdown logic
         let countdown = 3;
         const interval = setInterval(() => {
             countdown--;
@@ -299,48 +298,17 @@
                 const button = document.createElement('button');
                 button.textContent = module;
 
-                // Button öffnet neues Tab
+                // Redirect to placeholder URL
                 button.addEventListener('click', () => {
-                    openModulePage(module);
+                    const moduleName = module.replace(/\s+/g, '_'); // Replace spaces with underscores
+                    const url = `https://Semester_${moduleName}.io`; // Construct placeholder URL
+                    window.location.href = url; // Redirect
                 });
 
                 popupContent.appendChild(button);
             });
 
             popup.style.display = 'flex';
-        }
-
-        function openModulePage(module) {
-            const newWindow = window.open('', '_blank');
-            newWindow.document.write(`
-                <!DOCTYPE html>
-                <html lang="en">
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>${module}</title>
-                    <style>
-                        body {
-                            font-family: Arial, sans-serif;
-                            display: flex;
-                            justify-content: center;
-                            align-items: center;
-                            height: 100vh;
-                            margin: 0;
-                            background-color: black;
-                            color: white;
-                        }
-
-                        h1 {
-                            color: #ff1493;
-                        }
-                    </style>
-                </head>
-                <body>
-                    <h1>${module}</h1>
-                </body>
-                </html>
-            `);
         }
     </script>
 </body>
