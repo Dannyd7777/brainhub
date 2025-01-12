@@ -208,26 +208,26 @@
 
         const semesterModules = {
             1: [
-                "Einführung in die Informatik",
-                "Business Mathematik",
-                "Projektmanagement",
-                "Requirements Engineering",
-                "Wissenschaftliches Arbeiten 1"
+                { name: "Einführung in die Informatik", url: "https://dannyd7777.github.io/brainhubforum/?topic=einfuehrung-in-die-informatik" },
+                { name: "Business Mathematik", url: "https://dannyd7777.github.io/brainhubforum/?topic=business-mathematik" },
+                { name: "Projektmanagement", url: "https://dannyd7777.github.io/brainhubforum/?topic=projektmanagement" },
+                { name: "Requirements Engineering", url: "https://dannyd7777.github.io/brainhubforum/?topic=requirements-engineering" },
+                { name: "Wissenschaftliches Arbeiten 1", url: "https://dannyd7777.github.io/brainhubforum/?topic=wissenschaftliches-arbeiten-1" }
             ],
             2: [
-                "Grundlagen der Programmierung",
-                "Allgemeine BWL",
-                "Datenschutz",
-                "Software Engineering",
-                "Wissenschaftliches Arbeiten 2",
-                "Englisch"
+                { name: "Grundlagen der Programmierung", url: "https://dannyd7777.github.io/brainhubforum/?topic=grundlagen-der-programmierung" },
+                { name: "Allgemeine BWL", url: "https://dannyd7777.github.io/brainhubforum/?topic=allgemeine-bwl" },
+                { name: "Datenschutz", url: "https://dannyd7777.github.io/brainhubforum/?topic=datenschutz" },
+                { name: "Software Engineering", url: "https://dannyd7777.github.io/brainhubforum/?topic=software-engineering" },
+                { name: "Wissenschaftliches Arbeiten 2", url: "https://dannyd7777.github.io/brainhubforum/?topic=wissenschaftliches-arbeiten-2" },
+                { name: "Englisch", url: "https://dannyd7777.github.io/brainhubforum/?topic=englisch" }
             ],
             3: [
-                "Software Ergonomie",
-                "Empirische Methoden",
-                "Product Lifecycle Management",
-                "Softwareproduktentwicklung",
-                "Moderation und Führung"
+                { name: "Software Ergonomie", url: "https://dannyd7777.github.io/brainhubforum/?topic=software-ergonomie" },
+                { name: "Empirische Methoden", url: "https://dannyd7777.github.io/brainhubforum/?topic=empirische-methoden" },
+                { name: "Product Lifecycle Management", url: "https://dannyd7777.github.io/brainhubforum/?topic=product-lifecycle-management" },
+                { name: "Softwareproduktentwicklung", url: "https://dannyd7777.github.io/brainhubforum/?topic=softwareproduktentwicklung" },
+                { name: "Moderation und Führung", url: "https://dannyd7777.github.io/brainhubforum/?topic=moderation-und-fuehrung" }
             ]
         };
 
@@ -296,13 +296,11 @@
 
             semesterModules[semester].forEach(module => {
                 const button = document.createElement('button');
-                button.textContent = module;
+                button.textContent = module.name;
 
-                // Redirect to placeholder URL
+                // Redirect to actual URL
                 button.addEventListener('click', () => {
-                    const moduleName = module.replace(/\s+/g, '_'); // Replace spaces with underscores
-                    const url = `https://Semester_${moduleName}.io`; // Construct placeholder URL
-                    window.location.href = url; // Redirect
+                    window.location.href = module.url; // Redirect
                 });
 
                 popupContent.appendChild(button);
